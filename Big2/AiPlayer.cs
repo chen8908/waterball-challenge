@@ -1,6 +1,6 @@
 ﻿namespace Big2;
 
-public class AiPlayer(int index) : Player(index)
+public class AiPlayer(int index, CardPatternValidator cardPatternValidator) : Player(index, cardPatternValidator)
 {
     public override void SetName()
     {

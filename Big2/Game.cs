@@ -1,21 +1,12 @@
 ﻿namespace Big2;
 
-public class Game
+public class Game(List<Player> players)
 {
-    private readonly List<Player> _players;
-    private readonly CardPatternValidator _cardPatternValidator;
-    public int Round { get; private set; } = 0;
+    private readonly List<Player> _players = players;
+    public int Round { get; private set; } = 1;
     public IList<CardPattern?> Mesa { get; private set; } = [];
     public Deck Deck { get; private set; } = new Deck();
-    public Game(List<Player> players, CardPatternValidator cardPatternValidator)
-    {
-        _players = players;
-        _cardPatternValidator = cardPatternValidator;
 
-        foreach (var player in players)
-            player.SetCardPatternValidator(_cardPatternValidator);
-    }
-    
     /// <summary>
     /// 遊戲開始
     /// </summary>
@@ -29,7 +20,7 @@ public class Game
         {
             foreach (var player in _players)
                 Deck.Deal(player);
-        }while(Deck.Cards.Count == 0);
+        }while(Deck.Cards.Count > 0);
 
         Player? topPlayer = default;
         do
@@ -39,15 +30,14 @@ public class Game
             while(true)
             {
                 // 若有三個 pass，則回合結束，進入下一回合
-                if (Mesa.TakeLast(3).All(x => x is null))
-                    break;
-                if (Round == 1)
-                    topPlayer = _players.First(x => x.Hand.Cards.Any(c => c.Rank == Rank.Three && c.Suit == Suit.Club));
-                else
+                if (Mesa.Any() && Mesa.Count >= 3 && Mesa.TakeLast(3).All(x => x is null))
                 {
                     Mesa.Clear();
-                    topPlayer = _players.First(x => (topPlayer?.Index + 1) / 4 == x.Index);
+                    break;
                 }
+                topPlayer = (Round == 1 && turn == 1) || topPlayer is null ? 
+                    _players.First(x => x.Hand.Cards.Any(c => c.Rank == Rank.Three && c.Suit == Suit.Club)) :
+                    _players.First(x => (topPlayer.Index + 1) % 4 == x.Index);
 
                 Console.WriteLine($"輪到 {topPlayer.Name} 了");
                 topPlayer.Hand.PrintCardsWithIndices();
@@ -56,8 +46,7 @@ public class Game
                 Mesa.Add(cardPattern);
                 turn++;
             }
-            Round++;
-        }while(_players.Any(x => x.Hand.Cards.Count == 0));
+        }while(_players.All(x => x.Hand.Cards.Count > 0));
 
         var winner = _players.First(x => x.Hand.Cards.Count == 0);
         Console.WriteLine($"🎉 Winner is {winner.Name}. 🎉");
@@ -67,5 +56,5 @@ public class Game
     /// 由檯面取得頂牌
     /// </summary>
     /// <returns></returns>
-    private CardPattern? GetTopPlayByMesa() => Mesa.Any() ? Mesa.LastOrDefault() : default;
+    private CardPattern? GetTopPlayByMesa() => Mesa.Any() ? Mesa.LastOrDefault(x => x is not null) : default;
 }

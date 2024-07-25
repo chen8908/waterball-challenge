@@ -2,6 +2,10 @@
 
 public class FullHouse : CardPattern
 {
+    public FullHouse()
+    {
+        Name = "葫蘆";
+    }
     private const int CountOfCard = 5;
     public override bool Verify(List<Card> cards)
     {

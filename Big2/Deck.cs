@@ -36,7 +36,9 @@ public class Deck
         if (card is null)
             return;
             
-        Cards.Remove(card);
+        var cardList = Cards.ToList();
+        cardList.Remove(card);
+        Cards = cardList;
         player.Hand.Cards.Add(card);
     }
 }

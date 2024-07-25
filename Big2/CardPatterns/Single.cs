@@ -2,6 +2,10 @@
 
 public class Single : CardPattern
 {
+    public Single()
+    {
+        Name = "單張";
+    }
     private const int CountOfCard = 1;
     public override bool Verify(List<Card> cards)
     {

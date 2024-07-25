@@ -2,6 +2,10 @@
 
 public class Straight : CardPattern
 {
+    public Straight()
+    {
+        Name = "順子";
+    }
     private const int CountOfCard = 5;
     public override bool Verify(List<Card> cards)
     {

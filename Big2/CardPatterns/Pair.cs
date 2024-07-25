@@ -2,6 +2,10 @@
 
 public class Pair : CardPattern
 {
+    public Pair()
+    {
+        Name = "順子";
+    }
     private const int CountOfCard = 2;
     public override bool Verify(List<Card> cards)
     {
